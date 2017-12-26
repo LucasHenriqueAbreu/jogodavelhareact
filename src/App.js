@@ -5,55 +5,148 @@ import Game from './game/Game';
 import GameRoom from './gameroom/GameRoom'
 import Register from './register/Register'
 import Login from './login/Login'
+import Home from './home/Home'
 import {
-	BrowserRouter as Router,
-	Route,
-	Link
-} from 'react-router-dom'
+	AppBar,
+	Drawer,
+	List,
+	ListItem,
+	IconButton,
+	IconMenu,
+	MenuItem,
+	FlatButton,
+	Toggle,
+} from 'material-ui';
 
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
-class App extends Component {
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+
+class OptLogin extends Component {
+	static muiName = 'FlatButton';
+
 	render() {
 		return (
-			<div>
-				<div className="App">
-					<header className="App-header">
-						<img src={logo} className="App-logo" alt="logo" />
-						<h1 className="App-title">Jogo da velha em React</h1>
-					</header>
-					<div className="Content">
-						<div class="container" style="padding-top:80px;">
-							<div class="jumbotron text-center">
-								<h1><span class="fa fa-lock"></span> Jogo da velha Multiplayer</h1>
-								<p>Entrar ou se Cadastrar: </p>
-
-								<Router>
-									<div>
-										<ul>
-											<li><Link to="/login">Entrar</Link></li>
-											<li><Link to="/register">Cadastro</Link></li>
-											<li><Link to="/gameroom">Lista de saldas</Link></li>
-										</ul>
-
-										<hr />
-
-										<Route path="/login" component={Login} />
-										<Route path="/register" component={Register} />
-										<Route path="/gameroom" component={GameRoom} />
-									</div>
-								</Router>
-
-
-							</div>
-						</div>
-					</div>
-				</div>
-				<footer>
-					<strong><a href="https://github.com/LucasHenriqueAbreu">Lucas Henrique de Abreu</a></strong>
-					lucasigual14@gmail.com
-				</footer>
-			</div>
+			<FlatButton {...this.props} label="Entrar" />
 		);
 	}
 }
+
+const Logged = (props) => (
+	<IconMenu
+		{...props}
+		iconButtonElement={
+			<IconButton><MoreVertIcon /></IconButton>
+		}
+		targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+		anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+	>
+		<MenuItem linkButton
+			containerElement={<Link to="/login" />} primaryText="Entrar" />
+		<MenuItem linkButton
+			containerElement={<Link to="/register" />} primaryText="Cadastro" />
+		<MenuItem linkButton
+			containerElement={<Link to="/gameroom" />} primaryText="Lista de jogos" />
+
+	</IconMenu>
+);
+
+Logged.muiName = 'IconMenu';
+
+/**
+ * App component.
+ */
+class App extends Component {
+	state = {
+		logged: false,
+	};
+
+	handleChange = (event, logged) => {
+		this.setState({ logged: logged });
+	};
+	componentWillMount() {
+		this.setState({ drawerOpen: false });
+	}
+	handleOpen = () => { this.setState({ drawerOpen: true }); };
+	handleClose = () => { this.setState({ drawerOpen: false }); };
+
+	render() {
+		return <Router>
+			<div>
+				<Drawer
+					docked={false}
+					open={this.state.drawerOpen}
+					containerStyle={{ top: 64 }}
+					onRequestChange={this.handleClose}
+				>
+					{/* <List>
+						<ListItem
+							primaryText='Item 1'
+							nestedItems={
+								[<ListItem
+									key='0'
+									primaryText="Login"
+									containerElement={<Link to="/contact" />}
+									onTouchTap={this.handleClose}
+								/>
+									, <ListItem
+									key='1'
+									primaryText="About"
+									containerElement={<Link to="/about" />}
+									onTouchTap={this.handleClose}
+								/>
+								]
+							}
+						/>
+						<ListItem
+							primaryText='Item 2'
+							nestedItems={
+								[<ListItem
+									key='0'
+									primaryText="Home"
+									containerElement={<Link to="/" />}
+									onTouchTap={this.handleClose}
+								/>
+									, <ListItem
+									key='1'
+									primaryText="topics"
+									containerElement={<Link to="/topics" />}
+									onTouchTap={this.handleClose}
+								/>
+								]
+							}
+						/>
+						<ListItem
+							primaryText='Item 3'
+							nestedItems={
+								[<ListItem key='0' value="V3-1" primaryText="T3-1" onTouchTap={this.handleClose} />
+									, <ListItem key='1' value="V3-2" primaryText="T3-2" onTouchTap={this.handleClose} />
+								]
+							}
+						/>
+					</List> */}
+				</Drawer>
+				<Toggle
+					label="Logged"
+					defaultToggled={true}
+					onToggle={this.handleChange}
+					labelPosition="right"
+					style={{ margin: 20 }}
+				/>
+				<AppBar
+					title="Jogo da velha Multiplayer"
+					onLeftIconButtonTouchTap={this.handleOpen}
+					iconElementRight={this.state.logged ? <Logged /> : <OptLogin />}
+				/>
+
+				<Route exact path="/" component={Home} />
+				<Route path="/login" component={Login} />
+				<Route path="/register" component={Register} />
+				<Route path="/gameroom" component={GameRoom} />
+			</div>
+		</Router>;
+	}
+}
+
 export default App;
