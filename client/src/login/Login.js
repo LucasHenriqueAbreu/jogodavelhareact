@@ -44,7 +44,7 @@ class Login extends React.Component {
         FB.login(result => {
             console.log(result);
             if (result.authResponse) {
-                axios.post(`http://localhost:3001/auth/facebook`, { access_token: result.authResponse.accessToken })
+                axios.post(`http://localhost:8880/auth/facebook`, { access_token: result.authResponse.accessToken })
                     .then(response => {
                         let token = response.headers.get('x-auth-token');
                         if (token) {
@@ -66,7 +66,7 @@ class Login extends React.Component {
     }
 
     getCurrentUser() {
-        axios.get(`http://localhost:3001/auth/me`).then(response => {
+        axios.get(`http://localhost:8880/auth/me`).then(response => {
             console.log(response.json());
         }).catch(() => {
             console.log("Não foi possível retornar o usuário");
