@@ -9,7 +9,7 @@ class Login extends React.Component {
         this.state = {
 
         };
-        this.handleFBLogin = this.handleFBLogin.bind(this);
+        //this.handleFBLogin = this.handleFBLogin.bind(this);
     }
 
     loadFbLoginApi() {
@@ -42,19 +42,21 @@ class Login extends React.Component {
 
     fbLogin() {
         FB.login(result => {
+            console.log(result);
             if (result.authResponse) {
-                return this.http.post(`http://localhost:3000/api/v1/auth/facebook`, { access_token: result.authResponse.accessToken })
-                    .toPromise()
+                axios.post(`http://localhost:3001/auth/facebook`, { access_token: result.authResponse.accessToken })
                     .then(response => {
-                        var token = response.headers.get('x-auth-token');
+                        let token = response.headers.get('x-auth-token');
                         if (token) {
                             localStorage.setItem('id_token', token);
                         }
-                        resolve(response.json());
+                        console.log(response.json());
                     })
-                    .catch(() => reject());
+                    .catch(() => {
+                        console.log("erro ao logar");
+                    });
             } else {
-                reject();
+                console.log("Não teve resposta do login");
             }
         }, { scope: 'public_profile,email' })
     }
@@ -63,17 +65,11 @@ class Login extends React.Component {
         localStorage.removeItem('id_token');
     }
 
-    isLoggedIn() {
-        return new Promise((resolve, reject) => {
-            this.getCurrentUser().then(user => resolve(true)).catch(() => reject(false));
-        });
-    }
-
     getCurrentUser() {
-        return new Promise((resolve, reject) => {
-            return this.http.get(`http://localhost:3000/api/v1/auth/me`).toPromise().then(response => {
-                resolve(response.json());
-            }).catch(() => reject());
+        axios.get(`http://localhost:3001/auth/me`).then(response => {
+            console.log(response.json());
+        }).catch(() => {
+            console.log("Não foi possível retornar o usuário");
         });
     }
 

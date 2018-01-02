@@ -1,6 +1,7 @@
 'use strict';
 
-// muduels
+//mongoose file must be loaded before all other files in order to provide
+// models to other modules
 var mongoose = require('./mongoose'),
 	passport = require('passport'),
 	express = require('express'),
@@ -15,12 +16,12 @@ mongoose();
 var User = require('mongoose').model('User');
 var passportConfig = require('./passport');
 
-//Configuraçãro para login no facebook
+//setup configuration for facebook login
 passportConfig();
 
 var app = express();
 
-// libera cors
+// enable cors
 var corsOption = {
 	origin: true,
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -29,7 +30,7 @@ var corsOption = {
 };
 app.use(cors(corsOption));
 
-//requisitos da API rest
+//rest API requirements
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
@@ -65,7 +66,7 @@ router.route('/auth/facebook')
 			return res.send(401, 'User Not Authenticated');
 		}
 
-		// prepare token para API
+		// prepare token for API
 		req.auth = {
 			id: req.user.id
 		};
@@ -73,7 +74,7 @@ router.route('/auth/facebook')
 		next();
 	}, generateToken, sendToken);
 
-//middleware de manipulação de token
+//token handling middleware
 var authenticate = expressJwt({
 	secret: 'my-secret',
 	requestProperty: 'auth',
@@ -110,7 +111,7 @@ router.route('/auth/me')
 
 app.use('/api/v1', router);
 
-app.listen(3000);
+app.listen(3001);
 module.exports = app;
 
-console.log('Server running at http://localhost:3000/');
+console.log('Server running at http://localhost:3001/');

@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
 
 module.exports = function () {
 
-	var db = mongoose.connect('mongodb://localhost:27017/jogodavelha');
+	var db = mongoose.connect('mongodb://localhost:27017/fb-demo');
 
 	var UserSchema = new Schema({
 		firstName: { type: String },
